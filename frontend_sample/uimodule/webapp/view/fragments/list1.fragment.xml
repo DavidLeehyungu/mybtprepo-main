@@ -12,7 +12,7 @@
 			</OverflowToolbar>
 		</headerToolbar>
 		<content>
-            <Input id="input1" value=""/>            
+            <Input id="input1" value="{}"/>            
             <Input id="input2" value=""/>
             <Button id="button1" text="{i18n>button1}" press=".onCreate"/>
 		</content>
