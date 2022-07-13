@@ -14,6 +14,5 @@
 		<content>
 			<Text text="{i18n>WELCOME}" />
 		</content>
-	</Panel>
 
 </core:FragmentDefinition>
