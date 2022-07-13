@@ -53,8 +53,16 @@ sap.ui.define(
         MessageToast.show(msg);
       },
       onCreate: function(oEvent){
-        var stitle = this.getView().byId("input1");
+        // var stitle = this.getView().byId("input1");
         // var scontent = sap.ui.getCore().byId("input2").getValue();
+        let that=this
+        Fragment.load({
+          name : "gitpg.myapp.view.fragments.list1",
+          controller: this,
+          id: this.getView().getId()
+        })
+        var stitle = sap.ui.core.Fragment.byId(that.getView().getId(),"input1");
+
         debugger;
         
       },
