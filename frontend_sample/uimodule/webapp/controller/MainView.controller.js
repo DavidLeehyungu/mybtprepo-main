@@ -53,18 +53,28 @@ sap.ui.define(
         MessageToast.show(msg);
       },
       onCreate: function(oEvent){
+        // test1
         // var stitle = this.getView().byId("input1");
         // var scontent = sap.ui.getCore().byId("input2").getValue();
-        let that=this
-        Fragment.load({
-          name : "gitpg.myapp.view.fragments.list1",
-          controller: this,
-          id: this.getView().getId()
-        })
-        var stitle = sap.ui.core.Fragment.byId(that.getView().getId(),"input1");
+        // test2
+        // let that=this
+        // Fragment.load({
+        //   name : "gitpg.myapp.view.fragments.list1",
+        //   controller: this,
+        //   id: "tableFragment"
+        // }).then(function (pFragment){
+        //   this.oFragment = pFragment;
+        // })
+        // debugger;
+        // var stitle = sap.ui.core.Fragment.byId("tableFragment","input1").getValue();
+        // oModel.setProperty({stitle},)
+        // debugger;
+        //dialog에서 정의한 input 값을 가져오기 위해 getcore로 접근
+        var oInput1 = sap.ui.getCore().byId("input1").getValue();
+        var oInput2 = sap.ui.getCore().byId("input2").getValue();
+        alert(oInput);
 
-        debugger;
-        
+
       },
 
       onPressList: function(oEvent){
@@ -73,7 +83,7 @@ sap.ui.define(
         var sIdLink1 = this.getView().byId('list1').getId();
         var sIdLink2 = this.getView().byId('list2').getId();
         var sIdLink3 = this.getView().byId('list3').getId();
-        var sIdLink4 = this.getView().byId('list4').getId();        
+        var sIdLink4 = this.getView().byId('list4').getId();
         var sIdLink5 = this.getView().byId('list5').getId();
         var sIdLink6 = this.getView().byId('link1').getId();
       
