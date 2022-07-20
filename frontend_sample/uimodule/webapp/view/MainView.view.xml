@@ -1,38 +1,91 @@
 <mvc:View controllerName="gitpg.myapp.controller.MainView" 
-          xmlns:mvc="sap.ui.core.mvc" 
-          displayBlock="true" 
-          xmlns="sap.m" 
-          xmlns:tnt="sap.tnt">
-  <Page id="page" title="{i18n>title}">
-    <content>
-      <Title titleStyle='H1'>
-        <Link id="link1" text="WEB" target="_blank" press=".onPressList"/>
-      </Title>
-      <Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
-        <List id="list">
-          <items>
-            <StandardListItem id="list1" title="{i18n>list1}" press=".onPressList" iconDensityAware="false" iconInset="true" type="Navigation" />
-            <StandardListItem id="list2" title="{i18n>list2}" press=".onPressList" iconDensityAware="false" iconInset="true" type="Navigation" />
-            <StandardListItem id="list3" title="{i18n>list3}" press=".onPressList" iconDensityAware="false" iconInset="true" type="Navigation" />                   
-            <StandardListItem id="list4" title="{i18n>list4}" press=".onPressList" iconDensityAware="false" iconInset="true" type="Navigation" />
-            <StandardListItem id="list5" title="{i18n>list5}" press=".onPressList" iconDensityAware="false" iconInset="true" type="Navigation" />                        
-          </items>
-        </List>
-      </Panel>
-      <Panel>
-        <HBox id="myExtend">
-        
-        </HBox>
-      </Panel>
-      <!-- <tnt:NavigationList id="navigationList" width="320px" selectedKey="Files">
-        <tnt:items>
-          <tnt:NavigationListItem id="myListItemHeader" text="myFiles" key="rootItem1" icon="sap-icon://document" items="{myNode>/}">
-            <tnt:items>
-              <tnt:NavigationListItem id="myListItem" text="{myNode>}" />
-            </tnt:items>
-          </tnt:NavigationListItem>
-        </tnt:items>
-      </tnt:NavigationList> -->
-    </content>
-  </Page>
+	displayBlock="true" 
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m" 
+	xmlns:core="sap.ui.core"
+	xmlns="sap.uxap" 
+	xmlns:table="sap.ui.table"
+	xmlns:variant="sap.ui.comp.variants"
+	xmlns:u="sap.ui.unified">
+	<m:Page showHeader="false">
+		<m:content>
+			<ObjectPageLayout id="ObjectPageLayout"
+					showTitleInHeaderContent="false"
+					alwaysShowContentHeader="false"
+					preserveHeaderStateOnScroll="false" 
+					headerContentPinnable="true"
+					isChildPage="true"
+					upperCaseAnchorBar="false">
+				<headerTitle>
+					<ObjectPageDynamicHeaderTitle>
+						<expandedHeading>
+							<m:Title text="{i18n>title}" wrapping="true" class="sapUiSmallMarginEnd"/>
+						</expandedHeading>
+						<snappedHeading>
+							<m:Title text="{i18n>title}" wrapping="true" class="sapUiTinyMarginEnd"/>
+						</snappedHeading>
+			            <actions>            
+			              <m:Button type="Transparent" icon="sap-icon://search" text="조회" tooltip="Search" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
+			              <m:Button type="Transparent" icon="sap-icon://save" text="저장" tooltip="Save" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
+			              <m:Button type="Transparent" icon="sap-icon://delete" text="삭제" tooltip="Delete" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
+			              <m:Button type="Transparent" icon="sap-icon://accelerated" text="PDF 서식 출력" tooltip="Export" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
+			              <m:Button type="Transparent" icon="sap-icon://create" text="전자신고파일생성" tooltip="Create" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
+			            </actions>
+					</ObjectPageDynamicHeaderTitle>
+				</headerTitle>
+				<headerContent>
+					<m:HBox>
+						<m:VBox class="sapUiLargeMarginEnd" width="33%">
+							<m:Label text="회사코드" labelFor="CompanyCode" required="true" />
+							<m:Input id="CompanyCode" value="1000" showValueHelp="true" valueHelpRequest="onCompanyCodeOpenDialog" editable="true" required="true"/>
+							<m:Label text="사업장" labelFor="BusinessPlace"/>
+							<m:Input id="BusinessPlace" showValueHelp="true" valueHelpRequest="onBusinessPlaceOpenDialog" submit="onSearchTable"/>
+						</m:VBox>						
+						<m:VBox class="sapUiLargeMarginEnd" width="33%">
+							<m:Label text="회계연도" required="true"/>					
+							<m:DatePicker
+								id="FiscalYear"
+						        displayFormat="yyyy"
+						        required="true"/>
+							<m:Label text="과세종료월" required="true" labelFor="EndMonth"/>
+							<m:DatePicker
+								id="EndMonth"
+				                displayFormat="yyyy.MM"
+				                required="true"/>										
+						</m:VBox>
+						<m:VBox class="sapUiLargeMarginEnd" width="33%">
+							<m:Label text="증빙일자" labelFor="DocumentDate"/>
+							<m:DateRangeSelection id="DocumentDate"/>
+							<m:Label text="전기일자" labelFor="PostingDate"/>
+							<m:DateRangeSelection id="PostingDate"/>
+						</m:VBox>						
+						<m:VBox class="sapUiLargeMarginEnd" width="33%">
+							<m:Label text="세금그룹" labelFor="TaxCodeGroup" required="true"/>
+							<m:MultiComboBox 
+				                required="true"
+				                showSecondaryValues="true"
+				                items="{
+				                  path: '/data',
+				                  sorter: {path: 'name'}
+				                  }">
+				                 <core:ListItem key="{value}" text="{name}" additionalText="{value}"/> 
+							</m:MultiComboBox>	
+							<m:Label text="제출신고일"/>
+							<m:DatePicker
+								id="WriteDate"
+            					required="true"/>
+						</m:VBox>
+						<m:VBox class="sapUiLargeMarginEnd" width="33%">
+							<m:Label text="세무서" labelFor="TaxOffice"/>
+							<m:Input id="TaxOffice" showValueHelp="true" valueHelpRequest="TaxOfficeOpenDialog" submit="onSearchTable"/>
+						</m:VBox>			
+                <m:VBox>
+							<m:Label class="sapUiLargeMarginBottom"/>
+							<m:Label class="sapUiLargeMarginBottom"/>
+						</m:VBox>			
+					</m:HBox>
+				</headerContent>
+      </ObjectPageLayout>
+    </m:content>
+  </m:Page>
 </mvc:View>
