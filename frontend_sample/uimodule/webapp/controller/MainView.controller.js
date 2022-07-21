@@ -19,13 +19,13 @@ sap.ui.define(
     return Controller.extend("gitpg.myapp.controller.MainView", {
       onInit: function () {
 
-        this._searchDateSetting()
+        // this._searchDateSetting()
         // FiscalYear setting
         // var nowYear = nowToday.getFullYear();
         // var nowMonth = nowToday.getMonth()+1;
-        var sPostingDate = this.getView().byId("EndMonth");
+        // var sPostingDate = this.getView().byId("EndMonth");
         // var nowYear = sPostingDate.getDateValue().toLocaleDateString().substring(0,4);
-        var nowYear = sPostingDate.getDateValue();        
+        // var nowYear = sPostingDate.getDateValue();        
         // oView.byId("FiscalYear").setValue(nowYear);
         // for(var i = 0; i <= 9; i++) {
         //   (function(j, year) {
@@ -72,78 +72,7 @@ sap.ui.define(
 
         var sModel = new JSONModel(mData);
         this.getView().setModel(sModel);
-
-        // var oBusy = new sap.m.BusyDialog();
-        // var oModel = new JSONModel();
-        // oModel.attachRequestSent(function() {
-        //   oBusy.open();
-        // });
-        // oModel.loadData("../model/Data.json");
-        // oModel.attachRequestCompleted(function() {
-        //   oBusy.close();
-        // });
-        // this.getView().setModel(oModel, "ListModel")
-        
-
-        // let oJson = new JSONModel();
-        // this.getView().setModel(oJson, 'myNode');
-        // debugger;                                       
-        // oJson.loadData(
-        //     'http://localhost:8921/files'
-        //     // 'https://port-8921-nodejs-polite-ice-leencjr95746045.codeanyapp.com/files'
-            
-        // ).then(
-        //     function () {
-        //     }.bind(this)
-        // )
-        
-        // $.ajax(
-        //   'http://localhost:8921/files',
-        //   //     'https://port-8921-nodejs-quaint-lizard-lgx0920328747.codeanyapp.com/files'
-        //   {
-        //     method: "GET",
-        //     success : function (...params) {
-        //         debugger;  
-        //     }
-        //   }
-        // )
       },
-
-      _searchDateSetting : function() {
-        var oView = this.getView(),
-          today = new Date(),
-          todayYear = today.getFullYear(),
-          todayMonth = today.getMonth()+1;
-          
-        var	sPostingDate = oView.byId("PostingDate"),
-          sDocumentDate = oView.byId("DocumentDate");
-        var defalutDateValue = "",
-          defalutSecondDateValue = "";
-        
-        switch(todayMonth) {
-          case 1 :  case 2 : case 3 :
-            defalutDateValue = new Date(todayYear-1, 9, 1);
-            defalutSecondDateValue = new Date(todayYear-1, 11, 31);
-            break;
-          case 4 :  case 5 : case 6 :
-            defalutDateValue = new Date(todayYear, 0, 1);
-            defalutSecondDateValue = new Date(todayYear, 2, 31);
-            break;
-          case 7 :  case 8 : case 9 :
-            defalutDateValue = new Date(todayYear, 3, 1);
-            defalutSecondDateValue = new Date(todayYear, 5, 30);
-            break;
-          case 10 :  case 11 : case 12 :
-            defalutDateValue = new Date(todayYear, 6, 1);
-            defalutSecondDateValue = new Date(todayYear, 8, 30);
-            break;				
-        }
-        sPostingDate.setDateValue(defalutDateValue);
-        sPostingDate.setSecondDateValue(defalutSecondDateValue);
-        sDocumentDate.setDateValue(defalutDateValue);
-        sDocumentDate.setSecondDateValue(defalutSecondDateValue);
-      },
-
       onPress: function(oEvent){
         var msg = "";
         MessageToast.show(msg);

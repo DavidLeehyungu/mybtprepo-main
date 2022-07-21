@@ -1,10 +1,12 @@
 <mvc:View controllerName="gitpg.myapp.controller.MainView" 
 	displayBlock="true" 
+	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:m="sap.m" 
 	xmlns:core="sap.ui.core"
 	xmlns="sap.uxap" 
 	xmlns:table="sap.ui.table"
+	xmlns:smartTable="sap.ui.comp.smarttable"
 	xmlns:variant="sap.ui.comp.variants"
 	xmlns:u="sap.ui.unified">
 	<m:Page showHeader="false">
@@ -24,15 +26,8 @@
 						<snappedHeading>
 							<m:Title text="{i18n>title}" wrapping="true" class="sapUiTinyMarginEnd"/>
 						</snappedHeading>
-			            <actions>            
-			              <m:Button type="Transparent" icon="sap-icon://search" text="조회" tooltip="Search" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
-			              <m:Button type="Transparent" icon="sap-icon://save" text="저장" tooltip="Save" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
-			              <m:Button type="Transparent" icon="sap-icon://delete" text="삭제" tooltip="Delete" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
-			              <m:Button type="Transparent" icon="sap-icon://accelerated" text="PDF 서식 출력" tooltip="Export" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
-			              <m:Button type="Transparent" icon="sap-icon://create" text="전자신고파일생성" tooltip="Create" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
-			            </actions>
 					</ObjectPageDynamicHeaderTitle>
-				</headerTitle>
+				</headerTitle>	
 				<headerContent>
 					<m:HBox>
 						<m:VBox class="sapUiLargeMarginEnd" width="33%">
@@ -79,12 +74,649 @@
 							<m:Label text="세무서" labelFor="TaxOffice"/>
 							<m:Input id="TaxOffice" showValueHelp="true" valueHelpRequest="TaxOfficeOpenDialog" submit="onSearchTable"/>
 						</m:VBox>			
-                <m:VBox>
+             		   <m:VBox>
 							<m:Label class="sapUiLargeMarginBottom"/>
 							<m:Label class="sapUiLargeMarginBottom"/>
+				              <m:Button type="Transparent" icon="sap-icon://search" text="조회" tooltip="Search" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
+
 						</m:VBox>			
 					</m:HBox>
 				</headerContent>
+				<sections>			
+					<ObjectPageSection title="제출자 인적사항" id="PInfo">
+						<subSections>
+							<ObjectPageSubSection title="제출자 인적사항">
+								<blocks>
+										<html:table class="tables headerTable" width="100%">
+											<html:thead>
+												<html:tr class="tableTitle">
+													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
+														<m:Toolbar>
+															<html:strong><m:Title text="1. 제출자 인적사항"/></html:strong>
+															<!-- <m:ToolbarSpacer/>
+															<m:Button text="저장" icon="sap-icon://save" press="onSave"/>
+															<m:Button text="삭제" icon="sap-icon://delete" press="onDelete"/>
+															<m:Button text="매출서식" icon="sap-icon://create" press="onARFileCreate"/>
+															<m:Button text="매입서식" icon="sap-icon://create" press="onAPFileCreate"/>
+															<m:Button text="세금계산서 합계표 파일생성" icon="sap-icon://create" press="onFileCreate"/> -->
+														</m:Toolbar>
+													</html:th>
+												</html:tr>
+											</html:thead>
+											<html:tbody>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="사업자등록번호"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="{
+															path:'Salse>/total/TaxNumber',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="상호"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="{
+															path:'Salse>/total/BusinessPlaceName',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="성명(대표자)"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="{
+															path:'Salse>/total/RepresentativeName',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="사업장소재지"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="{
+															path:'Salse>/total/Address',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px; ">
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="거래기간"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="{
+															path:'Salse>/total/PostingDate',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="작성일"/>
+													</html:td>
+													<html:td style="width: 25%; height: 39px; text-align: center;">
+														<m:Text text="{
+															path:'Salse>/total/WriteDate',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+											</html:tbody>
+										</html:table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+				</sections>
+
+				<sections>							
+					<ObjectPageSection title="매출세금계산서총합계" id="ARSum">
+						<subSections>					
+							<ObjectPageSubSection title="1. 매출세금계산서총합계">
+								<blocks>
+										<html:table class="tables headerTable">
+											<html:thead>
+												<html:tr class="tableTitle">
+													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
+														<m:Toolbar>
+														</m:Toolbar>
+													</html:th>
+												</html:tr>
+											</html:thead>
+											<html:tbody>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 30%; height: 39px; text-align: center;" colspan="2">
+														<m:Text text="구분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="매출처수"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="매수"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="공급가액"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="세액"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 30%; height: 39px; text-align: center;" colspan="2">
+														<m:Text text="합계"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/total/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/total/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+															
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/total/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/total/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="과세기간 종료일 다음 달 11일까지 전송된 전자 세금계산서 발급분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="사업자 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/business/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/business/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/business/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/business/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="주민 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/citizon/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/citizon/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/citizon/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/citizon/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="소계"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/subSum/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/subSum/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/subSum/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/electronic/subSum/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="위 전자 세금계산서 외의 발급분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="사업자 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/business/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/business/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/business/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/business/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="주민 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/citizon/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/citizon/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/citizon/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/citizon/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="소계"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/subSum/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/subSum/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/subSum/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Salse>/etc/subSum/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+											</html:tbody>
+										</html:table>																				
+									</blocks>									
+								</ObjectPageSubSection>
+							<ObjectPageSubSection title="2. 과세기간 종료일 다음달 11일까지 전송된 전자세금계산서 외 발급분 매출처별 명세">
+								<blocks>
+										<html:table width="100%">
+											<html:thead>
+												<html:tr class="tableTitle">
+													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
+														<m:Toolbar>
+														</m:Toolbar>
+													</html:th>
+												</html:tr>
+											</html:thead>
+											<html:tbody>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="번호"/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="사업자 등록번호"/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="상호 (법인명)"/>
+													</html:td>						
+													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="매수"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="공급가액"/>
+													</html:td>		
+													<html:td style="width: 20; height: 39px; text-align: center;">
+														<m:Text text="세액"/>
+													</html:td>		
+													<html:td style="width: 20; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="비고"/>
+													</html:td>																																																																									
+												</html:tr>
+												<html:tr style="height: 39px; ">
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="조 십억 백만 천 일"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="조 십억 백만 천 일"/>
+													</html:td>
+												</html:tr>
+											</html:tbody>
+										</html:table>
+								</blocks>
+							</ObjectPageSubSection>								
+							</subSections>
+						</ObjectPageSection>
+						
+						<ObjectPageSection title="매입세금계산서총합계" id="APSum">
+							<subSections>
+								<ObjectPageSubSection>
+									<blocks>
+										<html:table class="tables headerTable">
+											<html:thead>
+												<html:tr class="tableTitle">
+													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
+														<!-- <html:strong><m:Text text="매입세금계산서총합계"/></html:strong> -->
+														<m:Toolbar>
+															<m:Title text="3. 매입세금계산서총합계"/>
+														</m:Toolbar>
+													</html:th>
+												</html:tr>
+											</html:thead>
+											<html:tbody>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 30%; height: 39px; text-align: center;" colspan="2">
+														<m:Text text="구분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="매출처수"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="매수"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="공급가액"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="세액"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 30%; height: 39px; text-align: center;" colspan="2">
+														<m:Text text="합계"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/total/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/total/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/total/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/total/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="과세기간 종료일 다음 달 11일까지 전송된 전자 세금계산서 발급분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="사업자 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/business/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/business/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/business/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/business/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="주민 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/citizon/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/citizon/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/citizon/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/citizon/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="소계"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/subSum/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/subSum/PublishCnt',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/subSum/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/electronic/subSum/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
+														<m:Text text="위 전자 세금계산서 외의 발급분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: center;">
+														<m:Text text="사업자 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/business/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/business/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/business/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/business/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="주민 등록번호 발행분"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/citizon/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/citizon/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/citizon/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/citizon/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
+														<m:Text text="소계"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/subSum/CustomerCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 15%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/subSum/PublishCnt',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/subSum/SupplyCost',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: right;">
+														<m:Text text="{
+															path:'Buy>/etc/subSum/TaxAmount',
+															formatter:'.formatNumberWithCommas'
+														}"/>
+													</html:td>
+												</html:tr>
+											</html:tbody>
+										</html:table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>					
+				</sections>				
       </ObjectPageLayout>
     </m:content>
   </m:Page>
