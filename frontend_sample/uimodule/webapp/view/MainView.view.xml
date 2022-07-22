@@ -59,10 +59,11 @@
 							<m:MultiComboBox 
 				                required="true"
 				                showSecondaryValues="true"
+								showSelectAll="true"								
 				                items="{
 				                  path: '/data',
 				                  sorter: {path: 'name'}
-				                  }">
+				                  }">								
 				                 <core:ListItem key="{value}" text="{name}" additionalText="{value}"/> 
 							</m:MultiComboBox>	
 							<m:Label text="제출신고일"/>
@@ -73,13 +74,19 @@
 						<m:VBox class="sapUiLargeMarginEnd" width="33%">
 							<m:Label text="세무서" labelFor="TaxOffice"/>
 							<m:Input id="TaxOffice" showValueHelp="true" valueHelpRequest="TaxOfficeOpenDialog" submit="onSearchTable"/>
-						</m:VBox>			
-             		   <m:VBox>
-							<m:Label class="sapUiLargeMarginBottom"/>
-							<m:Label class="sapUiLargeMarginBottom"/>
-				              <m:Button type="Transparent" icon="sap-icon://search" text="조회" tooltip="Search" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>
-
-						</m:VBox>			
+							<m:Label class="sapUiSamllMarginBottom"/>
+								<m:HBox justifyContent="End">
+								<m:Button type="Transparent" icon="sap-icon://search" text="조회" tooltip="Search" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>					
+								</m:HBox>
+							<m:Label class="sapUiSmallMarginBottom"/>	
+						</m:VBox>									
+					</m:HBox>
+					<m:HBox justifyContent="End">
+						<m:Button type="Transparent" icon="sap-icon://save" text="저장" tooltip="Save" press="onSave" class="margintop15 sapUiMediumMarginDown"/>
+						<m:Button type="Transparent" icon="sap-icon://delete" text="삭제" tooltip="Delete" press="onDelete" class="margintop15 sapUiMediumMarginDown"/>							
+						<m:Button type="Transparent" icon="sap-icon://create" text="매출서식" tooltip="CreateAR" press="onCreateAR" class="margintop15 sapUiMediumMarginDown"/>
+						<m:Button type="Transparent" icon="sap-icon://create" text="매입서식" tooltip="CreateAP" press="onCreateAP" class="margintop15 sapUiMediumMarginDown"/>							
+						<m:Button type="Transparent" icon="sap-icon://create-form" text="세금계산서 합계표 파일생성" tooltip="CreateAll" press="onCreateAll" class="margintop15 sapUiMediumMarginDown"/>							
 					</m:HBox>
 				</headerContent>
 				<sections>			
@@ -93,12 +100,6 @@
 													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
 														<m:Toolbar>
 															<html:strong><m:Title text="1. 제출자 인적사항"/></html:strong>
-															<!-- <m:ToolbarSpacer/>
-															<m:Button text="저장" icon="sap-icon://save" press="onSave"/>
-															<m:Button text="삭제" icon="sap-icon://delete" press="onDelete"/>
-															<m:Button text="매출서식" icon="sap-icon://create" press="onARFileCreate"/>
-															<m:Button text="매입서식" icon="sap-icon://create" press="onAPFileCreate"/>
-															<m:Button text="세금계산서 합계표 파일생성" icon="sap-icon://create" press="onFileCreate"/> -->
 														</m:Toolbar>
 													</html:th>
 												</html:tr>
@@ -423,24 +424,22 @@
 										<html:table width="100%">
 											<html:thead>
 												<html:tr class="tableTitle">
-													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
-														<m:Toolbar>
-														</m:Toolbar>
+													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="7">
 													</html:th>
 												</html:tr>
 											</html:thead>
 											<html:tbody>
 												<html:tr style="height: 39px;">
-													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
 														<m:Text text="번호"/>
 													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
 														<m:Text text="사업자 등록번호"/>
 													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
 														<m:Text text="상호 (법인명)"/>
 													</html:td>						
-													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="3">
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
 														<m:Text text="매수"/>
 													</html:td>
 													<html:td style="width: 20%; height: 39px; text-align: center;">
@@ -449,7 +448,7 @@
 													<html:td style="width: 20; height: 39px; text-align: center;">
 														<m:Text text="세액"/>
 													</html:td>		
-													<html:td style="width: 20; height: 39px; text-align: center;" rowspan="3">
+													<html:td style="width: 9; height: 39px; text-align: center;" rowspan="2">
 														<m:Text text="비고"/>
 													</html:td>																																																																									
 												</html:tr>
@@ -461,6 +460,52 @@
 														<m:Text text="조 십억 백만 천 일"/>
 													</html:td>
 												</html:tr>
+												<html:tr style="height: 20px; ">
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>																																																																	
+												</html:tr>		
+												<html:tr style="height: 20px; ">
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>																																																																	
+												</html:tr>																						
 											</html:tbody>
 										</html:table>
 								</blocks>
@@ -470,15 +515,13 @@
 						
 						<ObjectPageSection title="매입세금계산서총합계" id="APSum">
 							<subSections>
-								<ObjectPageSubSection>
+								<ObjectPageSubSection title="1. 매입세금계산서총합계">
 									<blocks>
 										<html:table class="tables headerTable">
 											<html:thead>
 												<html:tr class="tableTitle">
-													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
-														<!-- <html:strong><m:Text text="매입세금계산서총합계"/></html:strong> -->
+													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="7">
 														<m:Toolbar>
-															<m:Title text="3. 매입세금계산서총합계"/>
 														</m:Toolbar>
 													</html:th>
 												</html:tr>
@@ -714,8 +757,99 @@
 										</html:table>
 								</blocks>
 							</ObjectPageSubSection>
+							<ObjectPageSubSection title="2. 과세기간 종료일 다음달 11일까지 전송된 전자세금계산서 외 발급분 매입처별 명세">
+								<blocks>
+										<html:table width="100%">
+											<html:thead>
+												<html:tr class="tableTitle">
+													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="7">
+													</html:th>
+												</html:tr>
+											</html:thead>
+											<html:tbody>
+												<html:tr style="height: 39px;">
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
+														<m:Text text="번호"/>
+													</html:td>
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
+														<m:Text text="사업자 등록번호"/>
+													</html:td>
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
+														<m:Text text="상호 (법인명)"/>
+													</html:td>						
+													<html:td style="width: 12%; height: 39px; text-align: center;" rowspan="2">
+														<m:Text text="매수"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="공급가액"/>
+													</html:td>		
+													<html:td style="width: 20; height: 39px; text-align: center;">
+														<m:Text text="세액"/>
+													</html:td>		
+													<html:td style="width: 9; height: 39px; text-align: center;" rowspan="2">
+														<m:Text text="비고"/>
+													</html:td>																																																																									
+												</html:tr>
+												<html:tr style="height: 39px; ">
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="조 십억 백만 천 일"/>
+													</html:td>
+													<html:td style="width: 20%; height: 39px; text-align: center;">
+														<m:Text text="조 십억 백만 천 일"/>
+													</html:td>
+												</html:tr>
+												<html:tr style="height: 20px; ">
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>																																																																	
+												</html:tr>		
+												<html:tr style="height: 20px; ">
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>
+													<html:td style="width: 10%; height: 39px; text-align: center;">
+														<m:Text text=""/>
+													</html:td>																																																																	
+												</html:tr>																						
+											</html:tbody>
+										</html:table>
+								</blocks>
+							</ObjectPageSubSection>								
 						</subSections>
-					</ObjectPageSection>					
+					</ObjectPageSection>
 				</sections>				
       </ObjectPageLayout>
     </m:content>

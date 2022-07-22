@@ -47,7 +47,8 @@ sap.ui.define(
           "data": [
             {
               "name": "매출-계산서교부",
-              "value": "o05"
+              "value": "o05",
+              "keySelected" : ["0", "1"]
             },
             {
               "name":"매입-계산서수취",
