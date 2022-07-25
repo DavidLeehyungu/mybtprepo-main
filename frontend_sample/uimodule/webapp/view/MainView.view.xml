@@ -1,725 +1,1255 @@
-<mvc:View controllerName="gitpg.myapp.controller.MainView" 
-	displayBlock="true" 
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:m="sap.m" 
-	xmlns:core="sap.ui.core"
-	xmlns="sap.uxap" 
-	xmlns:table="sap.ui.table"
-	xmlns:smartTable="sap.ui.comp.smarttable"
-	xmlns:variant="sap.ui.comp.variants"
-	xmlns:u="sap.ui.unified">
-	<m:Page showHeader="false">
-		<m:content>
-			<ObjectPageLayout id="ObjectPageLayout"
-					showTitleInHeaderContent="false"
-					alwaysShowContentHeader="false"
-					preserveHeaderStateOnScroll="false" 
-					headerContentPinnable="true"
-					isChildPage="true"
-					upperCaseAnchorBar="false">
-				<headerTitle>
-					<ObjectPageDynamicHeaderTitle>
-						<expandedHeading>
-							<m:Title text="{i18n>title}" wrapping="true" class="sapUiSmallMarginEnd"/>
-						</expandedHeading>
-						<snappedHeading>
-							<m:Title text="{i18n>title}" wrapping="true" class="sapUiTinyMarginEnd"/>
-						</snappedHeading>
-					</ObjectPageDynamicHeaderTitle>
-				</headerTitle>	
-				<headerContent>
-					<m:HBox>
-						<m:VBox class="sapUiLargeMarginEnd" width="33%">
-							<m:Label text="회사코드" labelFor="CompanyCode" required="true" />
-							<m:Input id="CompanyCode" value="1000" showValueHelp="true" valueHelpRequest="onCompanyCodeOpenDialog" editable="true" required="true"/>
-							<m:Label text="사업장" labelFor="BusinessPlace"/>
-							<m:Input id="BusinessPlace" showValueHelp="true" valueHelpRequest="onBusinessPlaceOpenDialog" submit="onSearchTable"/>
-						</m:VBox>						
-						<m:VBox class="sapUiLargeMarginEnd" width="33%">
-							<m:Label text="회계연도" required="true"/>					
-							<m:DatePicker
-								id="FiscalYear"
-						        displayFormat="yyyy"
-						        required="true"/>
-							<m:Label text="과세종료월" required="true" labelFor="EndMonth"/>
-							<m:DatePicker
-								id="EndMonth"
-				                displayFormat="yyyy.MM"
-				                required="true"/>										
-						</m:VBox>
-						<m:VBox class="sapUiLargeMarginEnd" width="33%">
-							<m:Label text="증빙일자" labelFor="DocumentDate"/>
-							<m:DateRangeSelection id="DocumentDate"/>
-							<m:Label text="전기일자" labelFor="PostingDate"/>
-							<m:DateRangeSelection id="PostingDate"/>
-						</m:VBox>						
-						<m:VBox class="sapUiLargeMarginEnd" width="33%">
-							<m:Label text="세금그룹" labelFor="TaxCodeGroup" required="true"/>
-							<m:MultiComboBox 
-				                required="true"
-				                showSecondaryValues="true"
-								showSelectAll="true"								
-				                items="{
-				                  path: '/data',
-				                  sorter: {path: 'name'}
-				                  }">								
-				                 <core:ListItem key="{value}" text="{name}" additionalText="{value}"/> 
-							</m:MultiComboBox>	
-							<m:Label text="제출신고일"/>
-							<m:DatePicker
-								id="WriteDate"
-            					required="true"/>
-						</m:VBox>
-						<m:VBox class="sapUiLargeMarginEnd" width="33%">
-							<m:Label text="세무서" labelFor="TaxOffice"/>
-							<m:Input id="TaxOffice" showValueHelp="true" valueHelpRequest="TaxOfficeOpenDialog" submit="onSearchTable"/>
-							<m:Label class="sapUiSamllMarginBottom"/>
-								<m:HBox justifyContent="End">
-								<m:Button type="Transparent" icon="sap-icon://search" text="조회" tooltip="Search" press="onSearchTable" class="margintop15 sapUiMediumMarginDown"/>					
-								</m:HBox>
-							<m:Label class="sapUiSmallMarginBottom"/>	
-						</m:VBox>									
-					</m:HBox>
-					<m:HBox justifyContent="End">
-						<m:Button type="Transparent" icon="sap-icon://save" text="저장" tooltip="Save" press="onSave" class="margintop15 sapUiMediumMarginDown"/>
-						<m:Button type="Transparent" icon="sap-icon://delete" text="삭제" tooltip="Delete" press="onDelete" class="margintop15 sapUiMediumMarginDown"/>							
-						<m:Button type="Transparent" icon="sap-icon://create" text="매출서식" tooltip="CreateAR" press="onCreateAR" class="margintop15 sapUiMediumMarginDown"/>
-						<m:Button type="Transparent" icon="sap-icon://create" text="매입서식" tooltip="CreateAP" press="onCreateAP" class="margintop15 sapUiMediumMarginDown"/>							
-						<m:Button type="Transparent" icon="sap-icon://create-form" text="계산서 합계표 파일생성" tooltip="CreateAll" press="onCreateAll" class="margintop15 sapUiMediumMarginDown"/>							
-					</m:HBox>
-				</headerContent>
-				<sections>			
-					<ObjectPageSection title="제출자 인적사항" id="PInfo">
-						<subSections>
-							<ObjectPageSubSection title="제출자 인적사항">
-								<blocks>
-										<html:table class="tables headerTable" width="100%">
-											<html:thead>
-												<html:tr class="tableTitle">
-													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
-														<m:Toolbar>
-															<html:strong><m:Title text="1. 제출자 인적사항"/></html:strong>
-														</m:Toolbar>
-													</html:th>
-												</html:tr>
-											</html:thead>
-											<html:tbody>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="사업자등록번호"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="{
-															path:'Salse>/total/TaxNumber',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="상호"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="{
-															path:'Salse>/total/BusinessPlaceName',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="성명(대표자)"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="{
-															path:'Salse>/total/RepresentativeName',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="사업장소재지"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="{
-															path:'Salse>/total/Address',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px; ">
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="거래기간"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="{
-															path:'Salse>/total/PostingDate',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="작성일"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="{
-															path:'Salse>/total/WriteDate',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-											</html:tbody>
-										</html:table>
-								</blocks>
-							</ObjectPageSubSection>
-						</subSections>
-					</ObjectPageSection>
-				</sections>
-
-				<sections>							
-					<ObjectPageSection title="매출 계산서 합계표" id="ARSum">
-						<subSections>					
-							<ObjectPageSubSection title="1. 매출계산서 총합계">
-								<blocks>
-										<html:table class="tables headerTable">
-											<html:thead>
-												<html:tr class="tableTitle">
-													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="5">
-														<m:Toolbar>
-														</m:Toolbar>
-													</html:th>
-												</html:tr>
-											</html:thead>
-											<html:tbody>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 30%; height: 39px; text-align: center;" colspan="2">
-														<m:Text text="구분"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;">
-														<m:Text text="매출처수"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;">
-														<m:Text text="매수"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;">
-														<m:Text text="매출(수입) 금액"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 30%; height: 39px; text-align: center;" colspan="2">
-														<m:Text text="합계"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/total/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/total/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-															
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/total/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
-														<m:Text text="과세기간 종료일 다음 달 11일까지 전송된 전자 세금계산서 발급분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: center;">
-														<m:Text text="사업자 등록번호 발행분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/business/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/business/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/business/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
-														<m:Text text="주민 등록번호 발행분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/citizon/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/citizon/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/citizon/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
-														<m:Text text="소계"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/subSum/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/subSum/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/electronic/subSum/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
-														<m:Text text="위 전자 세금계산서 외의 발급분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: center;">
-														<m:Text text="사업자 등록번호 발행분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/business/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/business/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/business/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
-														<m:Text text="주민 등록번호 발행분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/citizon/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/citizon/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/citizon/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" class="brdleftNone">
-														<m:Text text="소계"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/subSum/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/subSum/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Salse>/etc/subSum/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-											</html:tbody>
-										</html:table>																				
-									</blocks>									
-								</ObjectPageSubSection>
-							<ObjectPageSubSection title="2. 과세기간 종료일 다음달 11일까지 전송된 전자세금계산서 외 발급분 매출처별 명세">
-								<blocks>
-										<html:table width="100%" border="true">
-											<html:thead>
-												<html:tr class="tableTitle">
-													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
-													</html:th>
-												</html:tr>
-											</html:thead>
-											<html:tbody>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="번호"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="사업자 등록번호"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="상호 (법인명)"/>
-													</html:td>						
-													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="매수"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="매출(수입) 금액"/>
-													</html:td>			
-													<html:td style="width: 10; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="비고"/>
-													</html:td>																																																																									
-												</html:tr>
-												<html:tr style="height: 39px; ">
-													<html:td style="width: 20%; height: 39px; text-align: center;">
-														<m:Text text="조 십억 백만 천 일"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 20px; ">
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>																																																																	
-												</html:tr>		
-												<html:tr style="height: 20px; ">
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>																																																																
-												</html:tr>																						
-											</html:tbody>
-										</html:table>
-								</blocks>
-							</ObjectPageSubSection>								
-							</subSections>
-						</ObjectPageSection>
-						
-						<ObjectPageSection title="매입 계산서 합계" id="APSum">
-							<subSections>
-								<ObjectPageSubSection title="1. 매입계산서 합계표">
-									<blocks>
-										<html:table class="tables headerTable" border="true">
-											<html:thead>
-												<html:tr class="tableTitle">
-													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="7">
-														<m:Toolbar>
-														</m:Toolbar>
-													</html:th>
-												</html:tr>
-											</html:thead>
-											<html:tbody>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 30%; height: 39px; text-align: center;">
-														<m:Text text="구분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: center;">
-														<m:Text text="매입처수"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: center;">
-														<m:Text text="매수"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;">
-														<m:Text text="매입금액"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 30%; height: 39px; text-align: center;">
-														<m:Text text="합계"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/total/CustomerTotal',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/total/CountTotal',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/total/TaxBaseAmountTotal',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
-														<m:Text text="과세기간 종료일 다음 달 11일까지 전송된 전자 세금계산서 발급분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/business/CountSupplier',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/business/CountDocument',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/business/SumTaxBaseAmount1',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/citizon/CustomerSubtotal1',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/citizon/CountSubtotal1',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/citizon/TaxBaseAmountSubtotal1',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/subSum/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/subSum/PublishCnt',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/electronic/subSum/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="3">
-														<m:Text text="위 전자 세금계산서 외의 발급분"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/business/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/business/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/business/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/citizon/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/citizon/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/citizon/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/subSum/CustomerCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 15%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/subSum/PublishCnt',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: right;">
-														<m:Text text="{
-															path:'Buy>/etc/subSum/SupplyCost',
-															formatter:'.formatNumberWithCommas'
-														}"/>
-													</html:td>
-												</html:tr>
-											</html:tbody>
-										</html:table>
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection title="2. 과세기간 종료일 다음달 11일까지 전송된 전자세금계산서 외 발급분 매입처별 명세">
-								<blocks>
-										<html:table width="100%" border="true">
-											<html:thead>
-												<html:tr class="tableTitle">
-													<html:th style="width: 100%; height: 37.4444px; text-align: left;" colspan="6">
-													</html:th>
-												</html:tr>
-											</html:thead>
-											<html:tbody>
-												<html:tr style="height: 39px;">
-													<html:td style="width: 15%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="번호"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="사업자 등록번호"/>
-													</html:td>
-													<html:td style="width: 20%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="상호 (법인명)"/>
-													</html:td>						
-													<html:td style="width: 10%; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="매수"/>
-													</html:td>
-													<html:td style="width: 25%; height: 39px; text-align: center;">
-														<m:Text text="매입 금액"/>
-													</html:td>			
-													<html:td style="width: 10; height: 39px; text-align: center;" rowspan="2">
-														<m:Text text="비고"/>
-													</html:td>																																																																									
-												</html:tr>
-												<html:tr style="height: 39px; ">
-													<html:td style="width: 20%; height: 39px; text-align: center;">
-														<m:Text text="조 십억 백만 천 일"/>
-													</html:td>
-												</html:tr>
-												<html:tr style="height: 20px; ">
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>																																																																	
-												</html:tr>		
-												<html:tr style="height: 20px; ">
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>
-													<html:td style="width: 10%; height: 39px; text-align: center;">
-														<m:Text text=""/>
-													</html:td>																																																																
-												</html:tr>																						
-											</html:tbody>
-										</html:table>
-								</blocks>
-							</ObjectPageSubSection>								
-						</subSections>
-					</ObjectPageSection>
-				</sections>				
-      </ObjectPageLayout>
-    </m:content>
-  </m:Page>
+<mvc:View
+    controllerName="gitpg.myapp.controller.MainView"
+    displayBlock="true"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.uxap"
+    xmlns:table="sap.ui.table"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:variant="sap.ui.comp.variants"
+    xmlns:u="sap.ui.unified"
+>
+	<m:Shell id="shell" appWidthLimited="false">
+		<m:App id="idAppControl">
+		<m:pages>
+			<m:Page showHeader="false">
+				<m:content>
+					<ObjectPageLayout
+                            id="ObjectPageLayout"
+                            alwaysShowContentHeader="false"
+                            preserveHeaderStateOnScroll="false"
+                            headerContentPinnable="true"
+                            isChildPage="true"
+                            useIconTabBar="false"
+                            showTitleInHeaderContent="true"
+                            upperCaseAnchorBar="false"
+                        >
+						<headerTitle>
+							<ObjectPageDynamicHeaderTitle>
+								<expandedHeading>
+									<m:Title text="{i18n>title}" wrapping="true" class="sapUiSmallMarginEnd" />
+								</expandedHeading>
+								<snappedHeading>
+									<m:Title text="{i18n>title}" wrapping="true" class="sapUiTinyMarginEnd" />
+								</snappedHeading>
+							</ObjectPageDynamicHeaderTitle>
+						</headerTitle>
+								
+						<headerContent>
+							<m:HBox>
+								<m:VBox class="sapUiLargeMarginEnd" width="33%">
+									<m:Label text="회사코드" labelFor="CompanyCode" required="true" />
+									<m:Input id="CompanyCode" value="1000" showValueHelp="true" valueHelpRequest="onCompanyCodeOpenDialog" editable="true" required="true" />
+									<m:Label text="사업장" labelFor="BusinessPlace" />
+									<m:Input id="BusinessPlace" showValueHelp="true" valueHelpRequest="onBusinessPlaceOpenDialog" submit="onSearchTable" />                 
+								</m:VBox>						
+								<m:VBox class="sapUiLargeMarginEnd" width="33%">
+									<m:Label text="회계연도" required="true" />					
+									<m:DatePicker id="FiscalYear" displayFormat="yyyy" required="true" />
+									<m:Label text="과세종료월" required="true" />
+									<m:DatePicker id="EndMonth" displayFormat="yyyy.MM" required="true" />						
+								</m:VBox>
+								<m:VBox class="sapUiLargeMarginEnd" width="33%">
+									<m:Label text="제출신고일" labelFor="WriteDate" />
+									<m:DatePicker id="WriteDate" required="true" />
+									<m:Label text="취합구분" />
+									<m:ComboBox width="auto" required="true" showSecondaryValues="true" items="{
+											      path: '/category',
+											      sorter: {path: 'name'}
+											      }">
+                						<core:ListItem key="{value}" text="{name}" additionalText="{value}" /> 
+        							</m:ComboBox>	
+								</m:VBox>						
+								<m:VBox class="sapUiLargeMarginEnd" width="33%">
+								 	<m:Label text="세무서" labelFor="TaxOffice" />
+									<m:Input id="TaxOffice" showValueHelp="true" valueHelpRequest="TaxOfficeOpenDialog" submit="onSearchTable" />    										
+								</m:VBox>
+							</m:HBox>
+						<m:HBox justifyContent="End">
+							<m:Button type="Transparent" icon="sap-icon://search" text="조회" tooltip="Search" press="onSearchTable" class="margintop15 sapUiMediumMarginDown" />
+							<m:Button type="Transparent" icon="sap-icon://save" text="저장" tooltip="Save" press="onSearchTable" class="margintop15 sapUiMediumMarginDown" />
+							<m:Button type="Transparent" icon="sap-icon://delete" text="삭제" tooltip="Delete" press="onSearchTable" class="margintop15 sapUiMediumMarginDown" />
+							<m:Button type="Transparent" icon="sap-icon://accelerated" text="PDF 서식 출력" tooltip="Export" press="onSearchTable" class="margintop15 sapUiMediumMarginDown" />
+							<m:Button type="Transparent" icon="sap-icon://create" text="전자신고파일생성" tooltip="Create" press="onSearchTable" class="margintop15 sapUiMediumMarginDown" />
+						</m:HBox>							
+						</headerContent>
+				
+						<sections>
+							<ObjectPageSection title="1. 제출자 인적사항">
+								<subSections>
+									<ObjectPageSubSection>
+										<blocks>
+											<m:VBox>
+												<html:table cellspacing="0" class="tables headerTable" border="true">
+													<html:colgroup>
+														<html:col width="5%" />
+														<html:col width="10%" />
+														<html:col width="*" />
+														<html:col width="10%" />
+														<html:col width="20%" />
+														<html:col width="10%" />
+														<html:col width="10%" />
+														<!-- <html:col width="10%" /> -->
+													</html:colgroup>
+													<html:tbody>
+														<html:tr>
+															<html:th colspan="7">일반과제사 부가가치세 신고서</html:th>
+															<!-- <html:td colspan="6"><m:Text text="{mainModel>/header/DueDay}" /></html:td> -->
+														</html:tr>													
+														<html:tr>
+															<html:th colspan="2">신고기간</html:th>
+															<html:td colspan="5"><m:Text text="{mainModel>/header/DueDay}" /></html:td>
+														</html:tr>
+														<html:tr>
+															<!-- <html:th rowspan="4">
+																<html:p>사</html:p>
+																<html:p>업</html:p>
+																<html:p>자</html:p>
+															</html:th> -->
+															<html:th>
+																<html:p>상      호</html:p>
+																<html:p>(법 인 명)</html:p>
+															</html:th>
+															<html:td><m:Text text="{mainModel>/header/BusinessTypeList}" /></html:td>
+															<html:th>
+																<html:p>성    명</html:p>
+																<html:p>(대표자명)</html:p>
+															</html:th>
+															<html:td><m:Text text="{mainModel>/header/TaxInvoiceRepresentativeNam}" /></html:td>
+															<html:th>사업자등록번호</html:th>
+															<html:td colspan="2"><m:Text text="{mainModel>/header/VATRegistration}" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th rowspan="2">법인번호</html:th>
+															<html:td rowspan="2" colspan="2"><m:Text text="{mainModel>/header/TaxNumber1}" /></html:td>
+															<html:th rowspan="2">
+																<html:p>전화번호</html:p>
+															</html:th>
+															<html:th>사업장</html:th>
+															<html:th>주소지</html:th>
+															<html:th>휴대전화</html:th>
+														</html:tr>
+														<html:tr>
+															<html:td><m:Text text="{mainModel>/header/PhoneNumber}" /></html:td>
+															<html:td />
+															<html:td />
+														</html:tr>
+														<html:tr>
+															<html:th>사업장주소</html:th>
+															<html:td colspan="3"><m:Text text="{mainModel>/header/AddressName}" /></html:td>
+															<html:th>전자우편주소</html:th>
+															<html:td colspan="2" />
+														</html:tr>
+													</html:tbody>
+												</html:table>
+												
+											</m:VBox>
+										</blocks>
+									</ObjectPageSubSection>
+								</subSections>
+							</ObjectPageSection>
+							
+							<ObjectPageSection title="2. 신고내용">
+								<subSections>
+									<ObjectPageSubSection>
+										<blocks>
+											<html:div class="allWidth">
+												<html:table cellspacing="0" class="tables headerTable" border="true">
+													<html:colgroup>
+														<html:col width="5%" />
+														<html:col width="10%" />
+														<html:col width="20%" />
+														<html:col width="5%" />
+														<html:col width="*" />
+														<html:col width="5%" />
+														<html:col width="*" />
+													</html:colgroup>
+													<html:tbody>
+														<html:tr>
+															<html:th colspan="7">
+																<html:p style="text-align: center;">❶      신     고     내     용</html:p>
+															</html:th>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="4">구 분</html:th>
+															<html:th>금 액</html:th>
+															<html:th>세율</html:th>
+															<html:th>세 액</html:th>
+														</html:tr>
+														<html:tr>
+															<html:th rowspan="9">
+																<html:p>과세</html:p>
+																<html:p>표준</html:p>
+																<html:p>및</html:p>
+																<html:p>매출</html:p>
+																<html:p>세액</html:p>
+															</html:th>
+															<html:th rowspan="4">과세</html:th>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>세금계산서 발급분</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(1)</html:th>
+															<html:td><m:Input editable="false" value="{
+																path:'mainModel>/Item/TAX1', formatter:'.setComma'}" change="onChangeInput($event, 'TAX1')" textAlign="Right" /></html:td>
+															<html:th>10/100</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE1', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE1')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>매입자발행 세금계산서</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(2)</html:th>
+															<html:td><m:Input value="{
+																	path:'mainModel>/Item/TAX2', 
+																	formatter:'.setComma'
+																}" change="onChangeInput($event, 'TAX2')" textAlign="Right" />
+															</html:td>
+															<html:th>10/100</html:th>
+															<html:td>
+																<m:Input value="{
+																	path:'mainModel>/Item/HWSTE2', 
+																	formatter:'.setComma'
+																}" change="onChangeInput($event, 'HWSTE2')" textAlign="Right" />
+															</html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>신용카드 현금영수증 발행분</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(3)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX3', formatter:'.setComma'}" change="onChangeInput($event, 'TAX3')" textAlign="Right" /></html:td>
+															<html:th>10/100</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE3', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE3')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>기타(정규영수증 외 매출분)</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(4)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX4', formatter:'.setComma'}" change="onChangeInput($event, 'TAX4')" textAlign="Right" /></html:td>
+															<html:th>10/100</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE4', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE4')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th rowspan="2">
+																<html:p>영세율</html:p>
+															</html:th>
+															<html:th>세금계산서 발급분</html:th>
+															<html:th>(5)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX5', formatter:'.setComma'}" change="onChangeInput($event, 'TAX5')" textAlign="Right" /></html:td>
+															<html:th>0/100</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE5', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE5')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>기타</html:th>
+															<html:th>(6)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX6', formatter:'.setComma'}" change="onChangeInput($event, 'TAX6')" textAlign="Right" /></html:td>
+															<html:th>0/100</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE6', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE6')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>예 정 신 고  누 락 분</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(7)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX7', formatter:'.setComma'}" change="onChangeInput($event, 'TAX7')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE7', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE7')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>대 손 세 액  가 감</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(8)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX8', formatter:'.setComma'}" change="onChangeInput($event, 'TAX8')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE8', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE8')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>합 계</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(9)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX9', formatter:'.setComma'}" change="onChangeInput($event, 'TAX9')" textAlign="Right" /></html:td>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉮</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE9', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE9')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th rowspan="9">
+																<html:p>매입</html:p>
+																<html:p>세액</html:p>
+															</html:th>
+															<html:th rowspan="3">
+																<html:p>세금계산서</html:p>
+																<html:p>수   취   분</html:p>
+															</html:th>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>일 반 매 입</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(10)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX10', formatter:'.setComma'}" change="onChangeInput($event, 'TAX10')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE10', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE10')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>수출기업 수입분 납부유예</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(10-1)</html:th>
+															<html:td class="visibleFalse" />
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																	path:'mainModel>/Item/HWSTE10_1', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE10_1')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>고정자산 매입</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(11)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX11', formatter:'.setComma'}" change="onChangeInput($event, 'TAX11')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE11', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE11')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>예 정 신 고  누 락 분</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(12)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX12', formatter:'.setComma'}" change="onChangeInput($event, 'TAX12')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE12', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE12')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>매입자발행 세금계산서</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(13)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX13', formatter:'.setComma'}" change="onChangeInput($event, 'TAX13')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE13', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE13')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>그 밖의 공제매입세액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(14)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX14', formatter:'.setComma'}" change="onChangeInput($event, 'TAX14')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE14', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE14')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>합계(10)-(10-1)+(11)+(12)+(13)+(14)</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(15)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX15', formatter:'.setComma'}" change="onChangeInput($event, 'TAX15')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE15', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE15')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>공제받지 못할 매입세액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(16)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX16', formatter:'.setComma'}" change="onChangeInput($event, 'TAX16')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE16', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE16')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>차 감 계 (15)-(16)</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(17)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX17', formatter:'.setComma'}" change="onChangeInput($event, 'TAX17')" textAlign="Right" /></html:td>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉯</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE17', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE17')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="5">
+																<html:div id="synapClipboard">
+																	<html:p>납부(환급)세액 (매출세액㉮-매입세액㉯)</html:p>
+																</html:div>
+															</html:th>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉰</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE177', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE177')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th rowspan="3">
+																<html:div id="synapClipboard">
+																	<html:p>경감</html:p>
+																	<html:p> </html:p>
+																	<html:p>공제</html:p>
+																	<html:p>세액</html:p>
+																</html:div>
+															</html:th>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>그 밖의 경감 공제세액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(18)</html:th>
+															<html:td class="visibleFalse" />
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE18', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE18')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>신용카드매출전표등 발행공제 등</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(19)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX19', formatter:'.setComma'}" change="onChangeInput($event, 'TAX19')" textAlign="Right" /></html:td>
+															<html:td> </html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE19', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE19')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">
+																<html:div id="synapClipboard">
+																	<html:p>합 계</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(20)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX20', formatter:'.setComma'}" change="onChangeInput($event, 'TAX20')" textAlign="Right" /></html:td>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉱</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE20', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE20')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="3">
+																<html:div id="synapClipboard">
+																	<html:p>예 정 신 고  미 환 급  세 액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(21)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX21', formatter:'.setComma'}" change="onChangeInput($event, 'TAX21')" textAlign="Right" /></html:td>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉲</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE21', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE21')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="3">
+																<html:div id="synapClipboard">
+																	<html:p>예 정 고 지 세 액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(22)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX22', formatter:'.setComma'}" change="onChangeInput($event, 'TAX22')" textAlign="Right" /></html:td>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉳</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE22', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE22')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="3">
+																<html:div id="synapClipboard">
+																	<html:p>사업양수자의 대리납부 기납부세액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(23)</html:th>
+															<html:td class="visibleFalse" />
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉴</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE23', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE23')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="3">
+																<html:div id="synapClipboard">
+																	<html:p>매입자 납부특례 기납부세액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(24)</html:th>
+															<html:td class="visibleFalse" />
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉵</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE24', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE24')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="3">
+																<html:div id="synapClipboard">
+																	<html:p>신용카드업자의 대리납부 기납부세액</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(25)</html:th>
+															<html:td class="visibleFalse" />
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉶</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE25', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE25')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="3">
+																<html:div id="synapClipboard">
+																	<html:p>가 산 세 액 계</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(26)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX26', formatter:'.setComma'}" change="onChangeInput($event, 'TAX26')" textAlign="Right" /></html:td>
+															<html:th>
+																<html:div id="synapClipboard">
+																	<html:p>㉷</html:p>
+																</html:div>
+															</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE26', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE26')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="5">
+																<html:div id="synapClipboard">
+																	<html:p>차감 가감하여 납부할 세액(환급받을 세액)(㉰-㉱-㉲-㉳-㉴-㉵+㉶)</html:p>
+																</html:div>
+															</html:th>
+															<html:th>(27)</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE27', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE27')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="6">
+																<html:div id="synapClipboard">
+																	<html:p>총괄 납부 사업자가 납부할 세액(환급받을 세액)</html:p>
+																</html:div>
+															</html:th>
+															<html:td />
+														</html:tr>
+													</html:tbody>
+												</html:table>
+												<html:table cellspacing="0" class="tables headerTable" border="true">
+													<html:colgroup>
+														<html:col width="5%" />
+														<html:col width="20%" />
+														<html:col width="20%" />
+														<html:col width="15%" />
+														<html:col width="15%" />
+														<html:col width="25%" />
+													</html:colgroup>
+													<html:tbody>
+														<html:tr>
+															<html:th colspan="10">
+																<html:div id="synapClipboard">
+																	<html:p>❹ 과 세 표 준  명 세</html:p>
+																</html:div>
+															</html:th>
+														</html:tr>
+														<html:tr>
+															<html:th colspan="2">업 태</html:th>
+															<html:th>종목</html:th>
+															<html:th>생산요소</html:th>
+															<html:th>업종 코드</html:th>
+															<html:th>금액</html:th>
+														</html:tr>
+														<html:tr>
+															<html:th>(28)</html:th>
+															<html:td><m:Input value="{mainModel>/Item/TAX28_T}" /></html:td>
+															<html:td><m:Input value="{mainModel>/Item/TAX28_J}" /></html:td>
+															<html:td />
+															<html:td><m:Input value="{mainModel>/Item/TAX28_C}" /></html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX28', formatter:'.setComma'}" change="onChangeInput($event, 'TAX28')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>(29)</html:th>
+															<html:td><m:Input value="{mainModel>/Item/TAX29_T}" /></html:td>
+															<html:td><m:Input value="{mainModel>/Item/TAX29_J}" /></html:td>
+															<html:td />
+															<html:td><m:Input value="{mainModel>/Item/TAX29_C}" /></html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX29', formatter:'.setComma'}" change="onChangeInput($event, 'TAX29')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>(30)</html:th>
+															<html:td><m:Input value="{mainModel>/Item/TAX30_T}" /></html:td>
+															<html:td><m:Input value="{mainModel>/Item/TAX30_J}" /></html:td>
+															<html:td />
+															<html:td><m:Input value="{mainModel>/Item/TAX30_C}" /></html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX30', formatter:'.setComma'}" change="onChangeInput($event, 'TAX30')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>(31)</html:th>
+															<html:td>수입금액제외</html:td>
+															<html:td><m:Input value="{mainModel>/Item/TAX31_J}" /></html:td>
+															<html:td />
+															<html:td><m:Input value="{mainModel>/Item/TAX31_C}" /></html:td>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX31', formatter:'.setComma'}" change="onChangeInput($event, 'TAX31')" textAlign="Right" /></html:td>
+														</html:tr>
+														<html:tr>
+															<html:th>(32)</html:th>
+															<html:td>합 계</html:td>
+															<html:td />
+															<html:td />
+															<html:td />
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX32', formatter:'.setComma'}" change="onChangeInput($event, 'TAX32')" textAlign="Right" /></html:td>
+														</html:tr>
+													</html:tbody>
+												</html:table>
+											</html:div>
+										</blocks>
+									</ObjectPageSubSection>
+								</subSections>
+							</ObjectPageSection>
+							
+							<ObjectPageSection title="3. 신고내용">
+								<subSections>
+									<ObjectPageSubSection>
+										<blocks>
+											<html:div class="allWidth">
+												<html:table class="tables headerTable" cellspacing="0" border="true">
+													<html:colgroup>
+														<html:col width="10%" />
+														<html:col width="5%" />
+														<html:col width="5%" />
+														<html:col width="10%" />
+														<html:col width="5%" />
+														<html:col width="*" />
+														<html:col width="10%" />
+														<html:col width="*" />
+													</html:colgroup>
+													<html:tr>
+														<html:th rowspan="9">예정신고 누 락 분 명    세</html:th>
+														<html:th class="center" rowspan="6">(7) 매출</html:th>
+														<html:th colspan="3">구분</html:th>
+														<html:th>금액</html:th>
+														<html:th>세율</html:th>
+														<html:th>세액</html:th>
+													</html:tr>
+													<html:tr>
+														<html:th class="center" rowspan="2">과세</html:th>
+														<html:th>세금계산서</html:th>
+														<html:th class="center">(33)</html:th>
+														<html:td><m:Input value="{
+																path:'mainModel>/Item/TAX33', formatter:'.setComma'}" change="onChangeInput($event, 'TAX33')" textAlign="Right" /></html:td>
+														<html:th class="center">10/100</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE33', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE33')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>기타</html:th>
+														<html:th class="center">(34)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX34', formatter:'.setComma'}" change="onChangeInput($event, 'TAX34')" textAlign="Right" /></html:td>
+														<html:th class="center">10/100</html:th>
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE34', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE34')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th class="center" rowspan="2">영세율</html:th>
+														<html:th>세금계산서</html:th>
+														<html:th class="center">(35)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX35', formatter:'.setComma'}" change="onChangeInput($event, 'TAX35')" textAlign="Right" /></html:td>
+														<html:th class="center">0/100</html:th>
+														<html:td class="visibleFalse" />
+													</html:tr>
+													<html:tr>
+														<html:th>기타</html:th>
+														<html:th class="center">(36)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX36', formatter:'.setComma'}" change="onChangeInput($event, 'TAX36')" textAlign="Right" /></html:td>
+														<html:th class="center">0/100</html:th>
+														<html:td class="visibleFalse" />
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">합계</html:th>
+														<html:th class="center">(37)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX37', formatter:'.setComma'}" change="onChangeInput($event, 'TAX37')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+															<html:td><m:Input value="{
+																path:'mainModel>/Item/HWSTE37', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE37')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th rowspan="3">(12) 매입</html:th>
+														<html:th colspan="2">세금계산서</html:th>
+														<html:th class="center">(38)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX38', formatter:'.setComma'}" change="onChangeInput($event, 'TAX38')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE38', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE38')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">기타공제 매입세액</html:th>
+														<html:th class="center">(39)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX39', formatter:'.setComma'}" change="onChangeInput($event, 'TAX39')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE39', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE39')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">합계</html:th>
+														<html:th class="center">(40)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX40', formatter:'.setComma'}" change="onChangeInput($event, 'TAX40')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE40', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE40')" textAlign="Right" /></html:td>
+													</html:tr>
+												</html:table>
+												<html:table class="tables headerTable" cellspacing="0" border="true">
+													<html:colgroup>
+														<html:col width="10%" />
+														<html:col width="13%" />
+														<html:col width="7%" />
+														<html:col width="5%" />
+														<html:col width="*" />
+														<html:col width="10%" />
+														<html:col width="*" />
+													</html:colgroup>
+													<html:tr>
+														<html:th rowspan="11">(14) 그 밖의 공제 매 입 세 액 명      세</html:th>
+														<html:th colspan="3">구분</html:th>
+														<html:th>금액</html:th>
+														<html:th>세율</html:th>
+														<html:th>세액</html:th>
+													</html:tr>
+													<html:tr>
+														<html:th rowspan="2">신용카드매출전표등 수령명세서 제출분</html:th>
+														<html:th>일반매입</html:th>
+														<html:th class="center">(41)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX41', formatter:'.setComma'}" change="onChangeInput($event, 'TAX41')" textAlign="Right" /></html:td>
+														<html:td />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE41', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE41')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>고정자산 매입</html:th>
+														<html:th class="center">(42)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX42', formatter:'.setComma'}" change="onChangeInput($event, 'TAX42')" textAlign="Right" /></html:td>
+														<html:td />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE42', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE42')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">의제매입세액</html:th>
+														<html:th class="center">(43)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX43', formatter:'.setComma'}" change="onChangeInput($event, 'TAX43')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE43', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE43')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">재활용 폐자원 등 매입세액</html:th>
+														<html:th class="center">(44)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX44', formatter:'.setComma'}" change="onChangeInput($event, 'TAX44')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE44', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE44')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">과세사업전환 매입세액</html:th>
+														<html:th class="center">(45)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE45', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE45')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">재고 매입세액</html:th>
+														<html:th class="center">(46)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE46', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE46')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">변제 대손세액</html:th>
+														<html:th class="center">(47)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE47', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE47')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">외국인 관광객에 대한 환급세액</html:th>
+														<html:th class="center">(48)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE48', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE48')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2" />
+														<html:th />
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td />
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">합계</html:th>
+														<html:th class="center">(49)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX49', formatter:'.setComma'}" change="onChangeInput($event, 'TAX49')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE49', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE49')" textAlign="Right" /></html:td>
+													</html:tr>
+												</html:table>
+												<html:table class="tables headerTable" cellspacing="0" border="true">
+													<html:colgroup>
+														<html:col width="10%" />
+														<html:col width="20%" />
+														<html:col width="5%" />
+														<html:col width="*" />
+														<html:col width="10%" />
+														<html:col width="*" />
+													</html:colgroup>
+													<html:tr>
+														<html:th rowspan="5">(16) 공제받지못할 매입세액 명세</html:th>
+														<html:th colspan="2">구분</html:th>
+														<html:th>금액</html:th>
+														<html:th>세율</html:th>
+														<html:th>세액</html:th>
+													</html:tr>
+													<html:tr>
+														<html:th>공제받지못할 매입세액</html:th>
+														<html:th class="center">(50)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX50', formatter:'.setComma'}" change="onChangeInput($event, 'TAX50')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE50', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE50')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>공통매입세액면세사업분</html:th>
+														<html:th class="center">(51)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX51', formatter:'.setComma'}" change="onChangeInput($event, 'TAX51')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE51', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE51')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>대손처분받은세액</html:th>
+														<html:th class="center">(52)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX52', formatter:'.setComma'}" change="onChangeInput($event, 'TAX52')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE52', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE52')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>합계</html:th>
+														<html:th class="center">(53)</html:th>
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/TAX53', formatter:'.setComma'}" change="onChangeInput($event, 'TAX53')" textAlign="Right" /></html:td>
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE53', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE53')" textAlign="Right" /></html:td>
+													</html:tr>
+												</html:table>
+												<html:table class="tables headerTable" cellspacing="0" border="true">
+													<html:colgroup>
+														<html:col width="10%" />
+														<html:col width="20%" />
+														<html:col width="5%" />
+														<html:col width="*" />
+														<html:col width="10%" />
+														<html:col width="27.5%" />
+													</html:colgroup>
+													<html:tr>
+														<html:th rowspan="8">(18) 기타경감 공제세액 명세</html:th>
+														<html:th colspan="2">구분</html:th>
+														<html:th>금액</html:th>
+														<html:th>세율</html:th>
+														<html:th>세액</html:th>
+													</html:tr>
+													<html:tr>
+														<html:th>전자신고 세액공제</html:th>
+														<html:th class="center">(54)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE54', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE54')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>전자세금계산서 발급세액 공제</html:th>
+														<html:th class="center">(55)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE55', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE55')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>택시운송사업자 경감세액</html:th>
+														<html:th>(56)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE56', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE56')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>대리납부 세액공제</html:th>
+														<html:th>(57)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE57', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE57')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>현금영수증 사업자 세액공제</html:th>
+														<html:th>(58)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE58', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE58')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>기타</html:th>
+														<html:th>(59)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE59', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE59')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>합계</html:th>
+														<html:th>(60)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{
+															path:'mainModel>/Item/HWSTE60', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE60')" textAlign="Right" /></html:td>
+													</html:tr>
+												</html:table>
+												<html:table class="tables headerTable" cellspacing="0" border="true">
+													<html:colgroup>
+														<html:col width="10%" />
+														<html:col width="8%" />
+														<html:col width="12%" />
+														<html:col width="5%" />
+														<html:col width="*" />
+														<html:col width="10%" />
+														<html:col width="*" />
+													</html:colgroup>
+													<html:tr>
+														<html:th rowspan="20">(25) 가산세 명세</html:th>
+														<html:th colspan="3">구분</html:th>
+														<html:th>금액</html:th>
+														<html:th>세율</html:th>
+														<html:th>세액</html:th>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">사업자 미등록 등</html:th>
+														<html:th class="center">(61)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX61', formatter:'.setComma'}" change="onChangeInput($event, 'TAX61')" textAlign="Right" /></html:td>
+														<html:th class="center">1/100</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE61', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE61')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th rowspan="3">세금계산서</html:th>
+														<html:th>지연발급 등</html:th>
+														<html:th class="center">(62)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX62', formatter:'.setComma'}" change="onChangeInput($event, 'TAX62')" textAlign="Right" /></html:td>
+														<html:th class="center">1/100</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE62', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE62')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>지연수취</html:th>
+														<html:th class="center">(63)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX63', formatter:'.setComma'}" change="onChangeInput($event, 'TAX63')" textAlign="Right" /></html:td>
+														<html:th class="center">5/1,000</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE63', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE63')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>미발급 등</html:th>
+														<html:th class="center">(64)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX64', formatter:'.setComma'}" change="onChangeInput($event, 'TAX64')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽 참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE64', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE64')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th rowspan="2">전자세금계산서 발급명세 전송</html:th>
+														<html:th>지연전송</html:th>
+														<html:th class="center">(65)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX65', formatter:'.setComma'}" change="onChangeInput($event, 'TAX65')" textAlign="Right" /></html:td>
+														<html:th class="center">5/1,000</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE65', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE65')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>미전송</html:th>
+														<html:th class="center">(66)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX66', formatter:'.setComma'}" change="onChangeInput($event, 'TAX66')" textAlign="Right" /></html:td>
+														<html:th class="center">1/100</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE66', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE66')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th rowspan="2">세금계산서 합계표</html:th>
+														<html:th>제출 불성실</html:th>
+														<html:th class="center">(67)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX67', formatter:'.setComma'}" change="onChangeInput($event, 'TAX67')" textAlign="Right" /></html:td>
+														<html:th class="center">5/1,000</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE67', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE67')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>지연제출</html:th>
+														<html:th class="center">(68)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX68', formatter:'.setComma'}" change="onChangeInput($event, 'TAX68')" textAlign="Right" /></html:td>
+														<html:th class="center">3/1,000</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE68', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE68')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th rowspan="4">신고 불성실</html:th>
+														<html:th>무신고(일반)</html:th>
+														<html:th class="center">(69)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX69', formatter:'.setComma'}" change="onChangeInput($event, 'TAX69')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE69', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE69')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>무신고(부당)</html:th>
+														<html:th class="center">(70)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX70', formatter:'.setComma'}" change="onChangeInput($event, 'TAX70')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE70', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE70')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>과소/초과환급신고(일반)</html:th>
+														<html:th class="center">(71)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX71', formatter:'.setComma'}" change="onChangeInput($event, 'TAX71')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE71', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE71')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>과소/초과환급신고(부당)</html:th>
+														<html:th class="center">(72)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX72', formatter:'.setComma'}" change="onChangeInput($event, 'TAX72')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE72', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE72')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">납부 불성실</html:th>
+														<html:th class="center">(73)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX73', formatter:'.setComma'}" change="onChangeInput($event, 'TAX73')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE73', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE73')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">영세율 과세표준신고 불성실</html:th>
+														<html:th class="center">(74)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX74', formatter:'.setComma'}" change="onChangeInput($event, 'TAX74')" textAlign="Right" /></html:td>
+														<html:th class="center">5/1,000</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE74', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE74')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">현금매출명세서 불성실</html:th>
+														<html:th class="center">(75)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX75', formatter:'.setComma'}" change="onChangeInput($event, 'TAX75')" textAlign="Right" /></html:td>
+														<html:th class="center">1/100</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE75', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE75')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">부동산임대공급가액명세서 불성실</html:th>
+														<html:th class="center">(76)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX76', formatter:'.setComma'}" change="onChangeInput($event, 'TAX76')" textAlign="Right" /></html:td>
+														<html:th class="center">1/100</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE76', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE76')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th rowspan="2">매입자 납부특례</html:th>
+														<html:th>거래계좌 미사용</html:th>
+														<html:th class="center">(77)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX77', formatter:'.setComma'}" change="onChangeInput($event, 'TAX77')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE77', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE77')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th>거래계좌 지연입금</html:th>
+														<html:th class="center">(78)</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX78', formatter:'.setComma'}" change="onChangeInput($event, 'TAX78')" textAlign="Right" /></html:td>
+														<html:th class="center">뒤쪽참조</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE78', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE78')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th colspan="2">합계</html:th>
+														<html:th class="center">(79)</html:th>
+														<html:td class="visibleFalse" />
+														<html:td class="visibleFalse" />
+														<html:td><m:Input value="{path:'mainModel>/Item/HWSTE79', formatter:'.setComma'}" change="onChangeInput($event, 'HWSTE79')" textAlign="Right" /></html:td>
+													</html:tr>
+												</html:table>
+												<html:table class="tables headerTable" cellspacing="0" border="true">
+													<html:colgroup>
+														<html:col width="10%" />
+														<html:col width="5%" />
+														<html:col width="10%" />
+														<html:col width="*" />
+														<html:col width="10%" />
+														<html:col width="*" />
+													</html:colgroup>
+													<html:tr>
+														<html:th rowspan="5">면세사업 수입금액</html:th>
+														<html:th colspan="2">업태</html:th>
+														<html:th>종목</html:th>
+														<html:th>코드번호</html:th>
+														<html:th>금액</html:th>
+													</html:tr>
+													<html:tr>
+														<html:th class="center">(80)</html:th>
+														<html:td><m:Input value="{mainModel>/Item/TAX80_T}" /></html:td>
+														<html:td><m:Input value="{mainModel>/Item/TAX80_J}" /></html:td>
+														<html:td><m:Input value="{mainModel>/Item/TAX80_C}" /></html:td>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX80', formatter:'.setComma'}" change="onChangeInput($event, 'TAX80')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th class="center">(81)</html:th>
+														<html:td><m:Input value="{mainModel>/Item/TAX81_T}" /></html:td>
+														<html:td><m:Input value="{mainModel>/Item/TAX81_J}" /></html:td>
+														<html:td><m:Input value="{mainModel>/Item/TAX81_C}" /></html:td>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX81', formatter:'.setComma'}" change="onChangeInput($event, 'TAX81')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th class="center">(82)</html:th>
+														<html:th>수입금액 제외</html:th>
+														<html:td><m:Input value="{mainModel>/Item/TAX82_J}" /></html:td>
+														<html:td><m:Input value="{mainModel>/Item/TAX82_C}" /></html:td>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX82', formatter:'.setComma'}" change="onChangeInput($event, 'TAX82')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:td colspan="2" />
+														<html:td />
+														<html:th>(83) 합계</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX83', formatter:'.setComma'}" change="onChangeInput($event, 'TAX83')" textAlign="Right" /></html:td>
+													</html:tr>
+												</html:table>
+												<html:table class="tables headerTable" cellspacing="0" border="true">
+													<html:colgroup>
+														<html:col width="10%" />
+														<html:col width="15%" />
+														<html:col width="*" />
+													</html:colgroup>
+													<html:tr>
+														<html:th rowspan="2">계산서발급 및 수취명세</html:th>
+														<html:th width="400px">(84) 계 산 서 교 부 금 액</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX84', formatter:'.setComma'}" change="onChangeInput($event, 'TAX84')" textAlign="Right" /></html:td>
+													</html:tr>
+													<html:tr>
+														<html:th width="400px">(85) 계 산 서 수 취 금 액</html:th>
+														<html:td><m:Input value="{path:'mainModel>/Item/TAX85', formatter:'.setComma'}" change="onChangeInput($event, 'TAX85')" textAlign="Right" /></html:td>
+													</html:tr>
+												</html:table>
+											</html:div>
+										</blocks>
+									</ObjectPageSubSection>
+								</subSections>
+							</ObjectPageSection>							
+						</sections>
+					</ObjectPageLayout>
+				</m:content>
+			</m:Page>
+		</m:pages>
+	</m:App>
+</m:Shell>
 </mvc:View>
